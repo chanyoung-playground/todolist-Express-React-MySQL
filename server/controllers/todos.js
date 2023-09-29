@@ -1,18 +1,22 @@
-const connection = require('../utils/db');
+const db = require('../utils/db');
 
 exports.createTodo = (req, res, next) => {
   console.log(req.body);
 };
 
-exports.getTodos = (req, res, next) => {
-  connection.query('SELECT * FROM todolist', (err, data, fields) => {
-    if (err) return next(new AppError(err));
+exports.getTodos = async (req, res, next) => {
+  try {
+    const sql = 'SELECT * FROM todo';
+    const [result] = await db.query(sql);
+    console.log(result);
     res.status(200).json({
       status: 'success',
-      length: data?.length,
-      data: data,
+      length: result?.length,
+      data: result,
     });
-  });
+  } catch (error) {
+    next(error);
+  }
 };
 
 exports.updateTodo = (req, res, next) => {
