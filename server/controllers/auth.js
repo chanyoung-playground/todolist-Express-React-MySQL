@@ -69,22 +69,6 @@ exports.signup = async (req, res, next) => {
 
     const createSql = 'INSERT INTO users(email, password) VALUES(?, ?)';
     await db.query(createSql, [email, hasedPassword]);
-    // const id = await db.query('SELECT LAST_INSERT_ID()');
-
-    // const accessToken = generateAccessToken(id, email);
-    // const refreshToken = generateRefreshToken(id, email);
-
-    // registerToken(refreshToken, accessToken);
-
-    // const decoded = verify(accessToken, process.env.SECRET_ATOKEN);
-
-    // res
-    //   .cookie('refreshToken', refreshToken, {
-    //     path: '/',
-    //     httpOnly: true,
-    //     maxAge: 3600 * 24 * 30 * 1000,
-    //   })
-    //   .header('Authorization', accessToken);
 
     res.status(200).json({
       status: 'success',
