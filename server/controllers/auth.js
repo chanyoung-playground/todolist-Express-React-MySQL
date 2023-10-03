@@ -22,14 +22,14 @@ exports.signin = async (req, res, next) => {
       throw new BadRequestError(400, 'User not found');
     }
 
-    if (!existedUser.password) {
-      throw new BadRequestError(400, 'Invalid Password');
+    const validPassword = await bcrypt.compare(password, existedUser.password);
+
+    if (!validPassword) {
+      throw new BadRequestError(400, '비밀번호가 틀립니다.');
     }
 
-    const id = await db.query('SELECT LAST_INSERT_ID()');
-
-    const accessToken = generateAccessToken(id, email);
-    const refreshToken = generateRefreshToken(id, email);
+    const accessToken = generateAccessToken(existedUser.id, email);
+    const refreshToken = generateRefreshToken(existedUser.id, email);
     registerToken(refreshToken, accessToken);
     const decoded = verify(accessToken, process.env.SECRET_ATOKEN);
     // res.cookie('refreshToken', refreshToken, {
@@ -49,6 +49,7 @@ exports.signin = async (req, res, next) => {
 
     res.status(200).json({
       status: 'success',
+      message: '로그인 성공',
     });
   } catch (err) {
     next(err);
