@@ -1,14 +1,17 @@
+const BadRequestError = require('../middlewares/customError');
+const jwt = require('jsonwebtoken');
+
 exports.authenticate = (req, res, next) => {
   const token = req.headers['authorization'];
   if (!token) {
-    return res.status(401).json('Access Denied. No token provided.');
+    throw new BadRequestError(400, 'Access Denied. No token provided.');
   }
 
   try {
-    const decoded = jwt.verify(token, secretKey);
+    const decoded = jwt.verify(token.split(' ')[1], process.env.SECRET_ATOKEN);
     req.user = decoded;
     next();
   } catch (error) {
-    return res.status(400).json('Invalid Token.');
+    throw new BadRequestError(400, 'Invalid Token..');
   }
 };
